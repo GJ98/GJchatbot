@@ -42,11 +42,11 @@ class KakaoApi:
 
 		ans = ("{0}의 {1}에 대한 정보를 전해드릴게요! 😀😀\n"
 			  "{0} 20km 반경 내 {2}과 관련된 {3}에 가보시는 건 어떤가요?\n"
-			  "주소는 {4}입니다. 장소 상세 페이지 URL : {5}".format(location, 
-			 										 			    self.category[1],
-															  	  	req['category_name'], 
-															   	  	req['place_name'], 
-															   	  	req['road_address_name'], 
-															   	  	req['place_url']))
+			  "주소는 {4}입니다. 장소 상세 페이지 URL : {5}".format(location,
+				  													self.category[1],
+																	req['category_name'], 
+																	req['place_name'], 
+																	req['road_address_name'], 
+																	req['place_url']))
 	
 		return ans
