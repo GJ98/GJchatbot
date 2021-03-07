@@ -1,6 +1,8 @@
+import json 
 from flask import Flask, request, jsonify, abort
 from GJchatbot.app.gjchatbot_api import GJchatbotApi
-from GJchatbot.app.kakao_transform import KakaoTransform
+from GJchatbot.app.platform_transform.kakao_transform import KakaoTransform
+from GJchatbot.app.platform_transform.naver_transform import NaverTransform
 
 class RestApiServer():
 
@@ -14,6 +16,7 @@ class RestApiServer():
         self.app = Flask(__name__)
         self.api = api
         self.kakao = KakaoTransform()
+        self.naver = NaverTransform()
 
         self.__build_route()
 
@@ -50,7 +53,7 @@ class RestApiServer():
                     return jsonify(inference)
 
                 elif bot_type == 'KAKAO':
-                    # 카카오톡 응답 처리
+                    # 카카오톡 응답 처리(동기식)
                     question = body['userRequest']['utterance']
                     answer = self.api.get_answer(question)
                     imageUrl = None
@@ -65,6 +68,34 @@ class RestApiServer():
 
                     kakao_format = self.kakao.json_format(inference)
                     return kakao_format
+                
+                elif bot_type == "NAVER":
+                    # 네이버톡톡 응답 처리(비동기식)
+                    user_key = body['user']
+                    event = body['event']
+
+                    if event == "open":
+                        print("채팅방에 유저가 들어왔습니다")
+                        return json.dumps({}), 200
+                
+                    elif event == "leave":
+                        print("채팅방에서 유져가 나갔습니다")
+                        return json.dumps({}), 200
+
+                    elif event == "send":
+                        user_text = body['textContent']['text']
+                        answer = self.api.get_answer(user_text)
+                        imageUrl = None
+
+                        inference = {
+                            'Answer': answer,
+                            'AnswerImageUrl': imageUrl
+                        }
+
+                        naver_format = self.naver.json_format(user_key, inference)
+                        self.naver.send_message(naver_format)
+                        return json.dumps({}), 200
+
 
             except Exception:
                 # 오류 발생 시 500 오류
