@@ -41,7 +41,7 @@ class NaverTransform:
             }
         }
 
-    def json_format(self, user_key: str, bot_resp: Dict[str, str]):
+    def json_format(self, user_key: str, bot_resp: Dict[str, str]) -> Dict[str, any]:
         """네이버 톡톡 응답 JSON 포맷 전환 함수
 
         Args:
