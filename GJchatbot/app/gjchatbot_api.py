@@ -34,6 +34,8 @@ class GJchatbotApi:
         self.entity_processor = entity_processor
         self.p = Preprocessor()
         self.kakao_api = KakaoApi()
+        self.location, self.date, self.place = [], [], []
+        self.intent = None
 
         if train is True:
             #self.embed_processor.fit(dataset.load_embed())
@@ -55,36 +57,44 @@ class GJchatbotApi:
         words = self.p.pos(question)
         token = self.embed_processor.predict(question)
         entity = self.entity_processor.predict(token)
-        intent = self.intent_processor.predict(token)
+        if self.intent is None:
+            self.intent = self.intent_processor.predict(token)
 
-        print('intent : ', intent)
+        print('intent : ', self.intent)
         print('entity : ', entity)
 
-        location, date, place = [], [], []
         for idx, e in enumerate(entity):
-            if "LOCATION" in e: location.append(words[idx])
-            elif "DATE" in e: date.append(words[idx])
-            elif "PLACE" in e: place.append(words[idx])
-        if len(date) == 0:
-            date.append('오늘')
-        if len(place) == 0 and intent == 'restaurant':
-            place.append('맛집')
-        if len(place) == 0 and intent == 'travel':
-            place.append('관광지')
+            if "LOCATION" in e: self.location.append(words[idx])
+            elif "DATE" in e: self.date.append(words[idx])
+            elif "PLACE" in e: self.place.append(words[idx])
+        if len(self.date) == 0:
+            self.date.append('오늘')
+        if len(self.place) == 0 and self.intent == 'restaurant':
+            self.place.append('맛집')
+        if len(self.place) == 0 and self.intent == 'travel':
+            self.place.append('관광지')
 
-        ans = "잘 모르겠어요."
-        if intent == 'weather':
+        if len(self.location) == 0:
+            return "어느 지역을 알려드릴까요"
+
+        print('location: {}, date: {}, place: {}'.format(self.location, self.date, self.place))
+
+        if self.intent == 'weather':
             crawler = WeatherCrawler()
-            ans = crawler.request(location=" ".join(location),
-                                  date=" ".join(date))
-        elif intent == 'dust':
+            ans = crawler.request(location=" ".join(self.location),
+                                  date=" ".join(self.date))
+        elif self.intent == 'dust':
             crawler = DustCrawler()
-            ans = crawler.request(location=" ".join(location),
-                                  date=" ".join(date))
+            ans = crawler.request(location=" ".join(self.location),
+                                  date=" ".join(self.date))
         else:
-            ans = self.kakao_api.request(intent=intent, 
-                                         location=" ".join(location),
-                                         place=" ".join(place))
+            ans = self.kakao_api.request(intent=self.intent, 
+                                         location=" ".join(self.location),
+                                         place=" ".join(self.place))
+        
+        self.location, self.date, self.place = [], [], []
+        self.intent = None
+
         return ans
 
     def get_intent(self, question: str) -> str:
