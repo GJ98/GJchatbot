@@ -10,7 +10,7 @@ class KakaoApi:
 
         self.url  = 'https://dapi.kakao.com/v2/local/search/'
         self.headers = {
-            "Authorization": "KakaoAK df8d3209a7ab037393012ec2cf508a91"
+            "Authorization": "KakaoAK key" #key
         }
         self.category = None
 

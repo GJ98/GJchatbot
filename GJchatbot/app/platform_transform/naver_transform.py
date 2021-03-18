@@ -7,7 +7,7 @@ class NaverTransform:
     def __init__(self):
         """네이버 톡톡 응답 JOSN 포맷 전환 클래스"""
 
-        self.authorization_key = '3z1WoQAbQ8Cv1ZMl8DO9'
+        self.authorization_key = None #key
 
     def text_format(self, text: str) -> Dict[str, any]:
         """네이버 톡톡 텍스트 JSON 포맷 전환 함수

@@ -25,14 +25,6 @@ class CNN(nn.Module):
         self.maxlen = 8
         self.label_size = len(label_dict)
 
-        '''
-        self.conv, self.maxpool = [], []
-        for idx in range(3):
-            self.conv.append(Conv(in_dim=self.vector_size,
-                                  out_dim=self.hidden_size,
-                                  kernel_size=3 + idx))
-            self.maxpool.append(nn.MaxPool1d(kernel_size=self.maxlen-(2 + idx)))
-        '''
         for idx in range(3):
             setattr(self, 'conv{}'.format(idx), Conv(in_dim=self.vector_size,
                                                      out_dim=self.hidden_size,
