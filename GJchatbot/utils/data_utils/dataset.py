@@ -27,7 +27,7 @@ class Dataset:
 
 		Returns:
 			List[List[str]]: 임베딩 프로세서 학습 데이터
-			(ex.[[token1]. [token2], [token3], ...])
+			(ex.[[token1], [token2], [token3], ...])
 		"""
 
 		intent_data_dir = PATH['intent_data_dir']
